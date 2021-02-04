@@ -1,4 +1,4 @@
-#System Git
+# System Git
 
 A simple command-line tool that maintains a list of git repositories and 
 provides a simple interface to see the status of every repo, a quick way to 
