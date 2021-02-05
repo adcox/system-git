@@ -22,13 +22,13 @@ NORM=$(tput sgr0)
 # Function Definitions
 # ------------------------------------------------------------------------------
 
-function isInRepoList() {
+isInRepoList() {
 	local path=$1
 	# Determine if path is in the REPO_LIST file
 
 	while read line
 	do
-		if [ $line == $path ]; then
+		if [ $line = $path ]; then
 			return 1
 		fi
 	done < $REPO_LIST
@@ -36,7 +36,7 @@ function isInRepoList() {
 	return 0
 }
 
-function isGitRepo(){
+isGitRepo(){
 	local path=$1
 	# Determine if the directory, $path, is a git repository
 
@@ -47,7 +47,7 @@ function isGitRepo(){
 	fi
 }
 
-function showRepoStatus () {
+showRepoStatus () {
 	local path=$1
 	# Input arguments
 	#
@@ -81,7 +81,7 @@ function showRepoStatus () {
 		status="N/A"
 		statusColor="${ORANGE}"
 	else
-		if [[ "$status" == *"up to date"* ]]; then
+		if [ "${status#*up to date}" != "$status" ]; then
 			statusColor="${GREEN}"
 		else
 			statusColor="${RED}"
@@ -91,7 +91,7 @@ function showRepoStatus () {
 	# number of modifications
 	numMod=$($gitAtDir diff --numstat | wc -l | awk '{print $1}')
 
-	if [ -z "$numMod" ] || [ $numMod -eq 0 ]; then
+	if [ -z "$numMod" ] || [ "$numMod" -eq 0 ]; then
 		numMod="0"
 		modColor="${GREEN}"
 	else
@@ -106,7 +106,7 @@ function showRepoStatus () {
 	echo "" # newline after each repo
 }
 
-function showHelp(){
+showHelp(){
 	echo "Usage: systemgit"
 	echo "       systemgit [show | add | remove]\n"
 
@@ -142,13 +142,13 @@ case $action in
 		;;
 	add) # add a repo to the list
 		isInRepoList $path
-		if [ $? == 1 ]; then
+		if [ $? = 1 ]; then
 			echo "Error: $path is already listed"
 			exit 1
 		fi
 
 		isGitRepo $path
-		if [ $? == 0 ]; then
+		if [ $? = 0 ]; then
 			echo "Error: $path is not a git repo"
 			exit 1
 		fi
@@ -159,7 +159,7 @@ case $action in
 		;;
 	remove) # remove a repo from the list
 		isInRepoList $path
-		if [ $? == 0 ]; then
+		if [ $? = 0 ]; then
 			echo "$path is not listed"
 			exit 0
 		fi
