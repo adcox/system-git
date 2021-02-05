@@ -53,6 +53,12 @@ showRepoStatus () {
 	#
 	# $path - Path to the git repo, no trailing slash
 
+	# Check that we have a valid repo
+	isGitRepo $path
+	if [ $? = 0 ]; then
+		return
+	fi
+
 	# Command to get info from a git repo in a different directory
 	gitAtDir="git --git-dir=$path/.git --work-tree=$path"
 
@@ -127,6 +133,11 @@ else
 fi
 
 path="`pwd`" # TODO - allow user to specify a path
+
+# Check to make sure REPO_LIST exists
+if [ ! -f $REPO_LIST ]; then
+	touch $REPO_LIST
+fi
 
 case $action in
 	help)
