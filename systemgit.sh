@@ -104,24 +104,28 @@ showRepoStatus () {
 		modColor="${RED}"
 	fi
 
-	echo "${BLUE}${BOLD}$path:${NORM}${NC}"
-	echo "  Currently at $branch/$commit"
-	echo "  Updated $ver"
-	echo "  ${statusColor}Status: $status${NC}"
-	echo "  ${modColor}$numMod modifications${NC}"
-	echo "" # newline after each repo
+	print "${BLUE}${BOLD}$path:${NORM}${NC}"
+	print "  Currently at $branch/$commit"
+	print "  Updated $ver"
+	print "  ${statusColor}Status: $status${NC}"
+	print "  ${modColor}$numMod modifications${NC}"
+	print "" # newline after each repo
 }
 
 showHelp(){
-	echo "Usage: systemgit"
-	echo "       systemgit [show | add | add-all | remove]\n"
+	print "Usage: systemgit"
+	print "       systemgit [show | add | add-all | remove]\n"
 
-	echo "Arguments:"
-	echo "  show:    show the status of all tracked repositories"
-	echo "  add:     add the current directory as a tracked repository"
-	echo "  add-all: add all git repositories within the current directory as"
-	echo "           tracked repositories"
-	echo "  remove:  remove the current directory from being tracked"
+	print "Arguments:"
+	print "  show:    show the status of all tracked repositories"
+	print "  add:     add the current directory as a tracked repository"
+	print "  add-all: add all git repositories within the current directory as"
+	print "           tracked repositories"
+	print "  remove:  remove the current directory from being tracked"
+}
+
+print() {
+    printf "$1\n"
 }
 
 # ------------------------------------------------------------------------------
@@ -146,29 +150,29 @@ case $action in
 		showHelp
 		;;
 	show) # Display git-repos
-		echo "Status of all repositories:\n"
+		print "Status of all repositories:\n"
 		while read line
 		do
 			showRepoStatus $line
 		done < $REPO_LIST
-		echo "Done!"
+		print "Done!"
 		;;
 	add) # add a repo to the list
 		isInRepoList $path
 		if [ $? = 1 ]; then
-			echo "Error: $path is already listed"
+			print "Error: $path is already listed"
 			exit 1
 		fi
 
 		isGitRepo $path
 		if [ $? = 0 ]; then
-			echo "Error: $path is not a git repo"
+			print "Error: $path is not a git repo"
 			exit 1
 		fi
 
 		# We've passed the checks, add the repo to the list
 		echo $path >> $REPO_LIST
-		echo "Added $path"
+		print "Added $path"
 		;;
 	add-all) # add all repos within the current directory to the list
 		# $0 is the full path to this script, so this essentially just runs
@@ -178,7 +182,7 @@ case $action in
 	remove) # remove a repo from the list
 		isInRepoList $path
 		if [ $? = 0 ]; then
-			echo "$path is not listed"
+			print "$path is not listed"
 			exit 0
 		fi
 
@@ -197,7 +201,7 @@ case $action in
 		mv $tempFile $REPO_LIST
 		;;
 	*)
-		echo "Error: unrecognized command: $action"
+		print "Error: unrecognized command: $action"
 		showHelp
 		;;
 esac
