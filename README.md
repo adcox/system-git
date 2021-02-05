@@ -1,8 +1,10 @@
 # System Git
 
-A simple command-line tool that maintains a list of git repositories and 
-provides a simple interface to see the status of every repo at once, a quick way to 
-see if you need to update or push any of them.
+Do you have dozens of repositories on your machine and can't keep track of which
+ones you need to push or pull to/from a remote server? System git is
+a simple command-line tool that maintains a list of git repositories and 
+provides a simple interface to see the status of every repo at once, a quick way 
+to see if you need to update or push any of them.
 
 ## Installation
 1. Make the `systemgit.sh` script executable: `chmod +x systemgit.sh`
@@ -18,4 +20,7 @@ manually.
 2. Call `systemgit` or `systemgit show` to view the status of all the 
 repositories you've added to the `.gitrepos` list.
 
-`systemgit help` displays the help message.
+## Tips
+* `systemgit help` displays the help message.
+* When you first set up the system, you can begin with `find $HOME -name ".git"`
+to get a list of repositories within your home directory
