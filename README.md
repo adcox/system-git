@@ -14,7 +14,9 @@ to see if you need to update or push any of them.
 ## Usage
 1. Create a list of git repositories. You can do this easily by navigating to 
 each directory and calling `systemgit add`. The path is saved in the 
-`$HOME/.gitrepos` file. To remove a repository, simply call `systemgit remove` 
+`$HOME/.gitrepos` file. If you have many git repositories within a parent
+directory, you can use `systemgit add-all` to find and add them all, regardless
+of how deeply nested they may be. To remove a repository, simply call `systemgit remove` 
 from the repository directory. Of course, you can always modify `.gitrepos`
 manually.
 2. Call `systemgit` or `systemgit show` to view the status of all the 
@@ -23,4 +25,5 @@ repositories you've added to the `.gitrepos` list.
 ## Tips
 * `systemgit help` displays the help message.
 * When you first set up the system, you can begin with `find $HOME -name ".git"`
-to get a list of repositories within your home directory
+to get a list of repositories within your home directory. Or you can just run
+`systemgit add-all` from your home directory to add them all automatically!

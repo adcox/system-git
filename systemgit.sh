@@ -114,12 +114,14 @@ showRepoStatus () {
 
 showHelp(){
 	echo "Usage: systemgit"
-	echo "       systemgit [show | add | remove]\n"
+	echo "       systemgit [show | add | add-all | remove]\n"
 
 	echo "Arguments:"
-	echo "  show:   show the status of all tracked repositories"
-	echo "  add:    add the current directory as a tracked repository"
-	echo "  remove: remove the current directory from being tracked"
+	echo "  show:    show the status of all tracked repositories"
+	echo "  add:     add the current directory as a tracked repository"
+	echo "  add-all: add all git repositories within the current directory as"
+	echo "           tracked repositories"
+	echo "  remove:  remove the current directory from being tracked"
 }
 
 # ------------------------------------------------------------------------------
@@ -167,6 +169,11 @@ case $action in
 		# We've passed the checks, add the repo to the list
 		echo $path >> $REPO_LIST
 		echo "Added $path"
+		;;
+	add-all) # add all repos within the current directory to the list
+		# $0 is the full path to this script, so this essentially just runs
+		# 'systemgit add' from each git repo found
+		find "$path" -name .git -type d -execdir "$0" add \;
 		;;
 	remove) # remove a repo from the list
 		isInRepoList $path
