@@ -3,12 +3,13 @@
 # Maintain a list of git repositories on your system and provide a quick way to
 # see the status of all of them
 #
-# For usage, call systemgit help
+# For usage, call systemgit -h
 #
 # Author: Andrew Cox
 # Version: 4 Feb 2021
 
-REPO_LIST="$HOME/.gitrepos"
+# Reset POSIX variable
+OPTIND=1
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -48,12 +49,10 @@ isGitRepo(){
 }
 
 showRepoStatus () {
-	local path=$1
-	# Input arguments
-	#
-	# $path - Path to the git repo, no trailing slash
+	local path=$1 		# path to git repository, no trailing slash
+	local maxLen=$2 	# length of longest path string
 
-	# Check that we have a valid repo
+	# Check that we have a valid repo; return if not
 	isGitRepo $path
 	if [ $? = 0 ]; then
 		return
@@ -65,9 +64,6 @@ showRepoStatus () {
 	# Bring remote references up to date; this can take some computation time!
 	# If the repo requires a password, the process will hang until the password is input
 	#update=$($gitAtDir remote update)
-
-	#basename `"$gitAtDir rev-parse --show-top-level"`
-	#repoName=$?
 
 	# most recent commit
 	commit=$($gitAtDir log -1 | grep "commit" |\
@@ -104,12 +100,22 @@ showRepoStatus () {
 		modColor="${RED}"
 	fi
 
-	print "${BLUE}${BOLD}$path:${NORM}${NC}"
-	print "  Currently at $branch/$commit"
-	print "  Updated $ver"
-	print "  ${statusColor}Status: $status${NC}"
-	print "  ${modColor}$numMod modifications${NC}"
-	print "" # newline after each repo
+	if [ $verbose == 1 ]; then
+		print "${BLUE}${BOLD}$path:${NORM}${NC}"
+		print "  Currently at $branch/$commit"
+		print "  Updated $ver"
+		print "  ${statusColor}Status: $status${NC}"
+		print "  ${modColor}$numMod modifications${NC}"
+		print "" # newline after each repo
+	else
+		# Use printf to avoid newlines
+		printf "${BLUE}${BOLD}%-${maxLen}s:${NORM}${NC}" "$path"
+		printf "%-25s" " $branch/$commit"
+		printf "%-24s" " | $ver"
+		printf " | ${statusColor}%-40s${NC}" "$status"
+		printf " | ${modColor}$numMod diff${NC}"
+		printf "\n"
+	fi
 }
 
 showHelp(){
@@ -122,6 +128,12 @@ showHelp(){
 	print "  add-all: add all git repositories within the current directory as"
 	print "           tracked repositories"
 	print "  remove:  remove the current directory from being tracked"
+	print ""
+
+	print "Options:"
+	print "  -h 	Show this help information"
+	print "  -f 	Specify a path for add/remove/add-all other than the current directory"
+	print "  -v 	Use verbose output"
 }
 
 print() {
@@ -131,14 +143,38 @@ print() {
 # ------------------------------------------------------------------------------
 # Parse Inputs
 # ------------------------------------------------------------------------------
+
+# Default values
+path="`pwd`"
+verbose=0
+REPO_LIST="$HOME/.gitrepos"
+
+# Parse options
+while getopts "h?vf:" opt; do
+	case "$opt" in
+		h|\?)
+			showHelp
+			exit 0
+			;;
+		v)
+			verbose=1
+			;;
+		f)
+			path="$OPTARG"
+			;;
+	esac
+done
+
+# Shift to after the options
+shift $((OPTIND-1))
+[ "${1:-}" = "--" ] && shift
+
 if [ "$#" -lt 1 ]; then
 	# No arguments passed in - do default action
 	action="show"
 else
 	action="$1"
 fi
-
-path="`pwd`" # TODO - allow user to specify a path
 
 # Check to make sure REPO_LIST exists
 if [ ! -f $REPO_LIST ]; then
@@ -151,9 +187,21 @@ case $action in
 		;;
 	show) # Display git-repos
 		print "Status of all repositories:\n"
+
+		# Get length of longest string
+		maxLen=0
 		while read line
 		do
-			showRepoStatus $line
+			len=${#line}
+			if [ $len -gt $maxLen ]; then
+				maxLen=$len
+			fi
+		done < $REPO_LIST
+
+		# Print the repository status
+		while read line
+		do
+			showRepoStatus $line $maxLen
 		done < $REPO_LIST
 		print "Done!"
 		;;

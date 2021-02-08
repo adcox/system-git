@@ -23,7 +23,7 @@ manually.
 repositories you've added to the `.gitrepos` list.
 
 ## Tips
-* `systemgit help` displays the help message.
+* `systemgit -h` displays the help message.
 * When you first set up the system, you can begin with `find $HOME -name ".git"`
 to get a list of repositories within your home directory. Or you can just run
 `systemgit add-all` from your home directory to add them all automatically!
