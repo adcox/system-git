@@ -27,3 +27,6 @@ repositories you've added to the `.gitrepos` list.
 * When you first set up the system, you can begin with `find $HOME -name ".git"`
 to get a list of repositories within your home directory. Or you can just run
 `systemgit add-all` from your home directory to add them all automatically!
+* Any lines in the `$HOME/.gitrepos` file that begin with a "#" character are
+printed to the screen when `systemgit show` is called, a useful way to add
+"headers" to your list of repositories.

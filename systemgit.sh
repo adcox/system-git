@@ -201,7 +201,12 @@ case $action in
 		# Print the repository status
 		while read line
 		do
-			showRepoStatus $line $maxLen
+            if [[ $line == \#* ]]; then
+                # Print lines that begin with "#" character
+                print "$line"
+            else
+                showRepoStatus $line $maxLen
+            fi
 		done < $REPO_LIST
 		print "Done!"
 		;;
