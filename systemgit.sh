@@ -29,6 +29,10 @@ isInRepoList() {
 
     while read line
     do
+        if [[ $line == \#* ]]; then
+            continue
+        fi
+
         if [ $line = $path ]; then
             return 1
         fi
